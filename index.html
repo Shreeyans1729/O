@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shristi di's Birthday Bio Quest 🎉</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            color: #293132;
+        }
+        .container {
+            max-width: 480px;
+            margin: 36px auto 0 auto;
+            background: rgba(255,255,255,0.98);
+            border-radius: 20px;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.13);
+            padding: 38px 26px 28px 26px;
+            text-align: center;
+        }
+        .hero {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.1rem;
+            color: #378a34;
+            margin-bottom: 10px;
+            letter-spacing: 0.02em;
+        }
+        .progress {
+            margin: 12px 0 18px 0;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #66d8a2, #6a82fb);
+            width: 0%;
+            transition: width 0.4s;
+        }
+        .bio-img {
+            width: 90px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 10px rgba(50,150,120,0.13));
+        }
+        .page-content {
+            min-height: 220px;
+            padding: 12px 0 0 0;
+        }
+        .bio-question {
+            font-size: 1.13rem;
+            margin: 18px 0 10px 0;
+        }
+        .bio-options {
+            margin: 12px 0 0 0;
+        }
+        .bio-option {
+            display: block;
+            background: #e6ffed;
+            color: #226235;
+            border: 1px solid #86e69d;
+            font-size: 1.01rem;
+            margin: 7px 0;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        .bio-option:hover, .bio-option.selected {
+            background: #b0f1ca;
+        }
+        .bio-feedback {
+            margin: 14px 0 0 0;
+            color: #218c53;
+            font-weight: bold;
+            font-size: 1.05rem;
+            min-height: 28px;
+        }
+        .bio-special {
+            margin: 18px auto 0 auto;
+            color: #218c53;
+            font-size: 1.1rem;
+            background: #f6f9e6;
+            border-radius: 10px;
+            padding: 10px 8px;
+            width: 90%;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s, transform 0.3s;
+        }
+        .bio-special.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .next-btn {
+            margin: 24px 0 0 0;
+            padding: 10px 24px;
+            background: #42ea7f;
+            color: #fff;
+            font-size: 1.07rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 12px #9ae3ae77;
+            font-family: 'Montserrat', sans-serif;
+            display: none;
+            transition: background 0.18s;
+        }
+        .next-btn:active {
+            background: #2fa75a;
+        }
+        .footer {
+            margin-top: 30px;
+            color: #888a8d;
+            font-size: 0.96rem;
+        }
+        /* Confetti for celebration! */
+        .confetti {
+            position: fixed;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+        .trophy {
+            font-size: 3.2rem;
+            margin: 16px 0 4px 0;
+            animation: trophyPop 1s;
+        }
+        @keyframes trophyPop {
+            0% { transform: scale(0.6);}
+            70% { transform: scale(1.15);}
+            100% { transform: scale(1);}
+        }
+        .crown {
+            font-size: 2.5rem;
+            display: block;
+            margin: 0 auto 10px auto;
+            animation: crownBounce 1.2s;
+        }
+        @keyframes crownBounce {
+            0% { transform: scale(0.5);}
+            50% { transform: scale(1.2);}
+            100% { transform: scale(1);}
+        }
+        @media (max-width: 550px) {
+            .container { max-width: 97vw; padding: 18px 2vw; }
+            .bio-img { width: 64px; }
+        }
+    </style>
+</head>
+<body>
+<canvas class="confetti" id="confetti-canvas" style="display:none"></canvas>
+<div class="container">
+    <div class="hero">🎂 Shristi di's Birthday Bio Quest! 🎂</div>
+    <div class="progress"><div class="progress-bar" id="progressbar"></div></div>
+    <div class="page-content" id="page-content"></div>
+    <button class="next-btn" id="next-btn" onclick="goToNextPage()">Next &rarr;</button>
+    <div class="footer">
+        With love from your brother.<br>
+        Keep blooming, Shristi di! 🌸
+    </div>
+</div>
+<script>
+/* Biology MCQs pool (class 12th level) */
+const questionPool = [
+    {
+        q: "Which structure in a cell is responsible for protein synthesis?",
+        options: ["Lysosome", "Ribosome", "Golgi apparatus", "Mitochondria"],
+        answer: 1
+    },
+    {
+        q: "Which hormone is known as the 'growth hormone' in humans?",
+        options: ["Thyroxine", "Insulin", "Growth Hormone (GH)", "Adrenaline"],
+        answer: 2
+    },
+    {
+        q: "The functional unit of kidney is called?",
+        options: ["Neuron", "Nephron", "Neutron", "Neuroglia"],
+        answer: 1
+    },
+    {
+        q: "DNA replication takes place during which phase of cell cycle?",
+        options: ["G1 phase", "G2 phase", "S phase", "M phase"],
+        answer: 2
+    },
+    {
+        q: "Which part of the brain controls balance and posture?",
+        options: ["Cerebrum", "Cerebellum", "Medulla", "Pons"],
+        answer: 1
+    },
+    {
+        q: "What is the main photosynthetic pigment in plants?",
+        options: ["Chlorophyll", "Carotene", "Xanthophyll", "Anthocyanin"],
+        answer: 0
+    },
+    {
+        q: "Which blood cells are responsible for clotting?",
+        options: ["Red blood cells", "White blood cells", "Platelets", "Plasma"],
+        answer: 2
+    },
+    {
+        q: "Which disease is caused by Plasmodium?",
+        options: ["Typhoid", "Malaria", "Dengue", "Polio"],
+        answer: 1
+    },
+    {
+        q: "What is the largest gland in the human body?",
+        options: ["Pancreas", "Liver", "Thyroid", "Adrenal"],
+        answer: 1
+    },
+    {
+        q: "Which organelle has its own DNA?",
+        options: ["Nucleus", "Mitochondria", "Endoplasmic reticulum", "Golgi complex"],
+        answer: 1
+    },
+    {
+        q: "Which is the universal donor blood group?",
+        options: ["O+", "O-", "AB+", "AB-"],
+        answer: 1
+    },
+    {
+        q: "Which plant tissue is responsible for transporting water?",
+        options: ["Phloem", "Xylem", "Parenchyma", "Collenchyma"],
+        answer: 1
+    },
+    {
+        q: "The process of formation of gametes is called?",
+        options: ["Mitosis", "Meiosis", "Fertilization", "Gametogenesis"],
+        answer: 3
+    },
+    {
+        q: "Which vitamin is essential for blood clotting?",
+        options: ["Vitamin A", "Vitamin B12", "Vitamin K", "Vitamin C"],
+        answer: 2
+    },
+    {
+        q: "Which part of the human ear is responsible for balance?",
+        options: ["Cochlea", "Semicircular canals", "Eardrum", "Pinna"],
+        answer: 1
+    },
+    {
+        q: "Which enzyme is present in saliva?",
+        options: ["Maltase", "Amylase", "Lipase", "Pepsin"],
+        answer: 1
+    }
+];
+
+// Motivational messages for each question (unique per round)
+const motivationalMessages = [
+    "Amazing start, Shristi di! 🌟 Keep going, the world is yours.",
+    "You’re unstoppable, Shristi di! Your brainpower is next level! 💡",
+    "You really are a Bio Queen! 👑 Keep shining.",
+    "Your hard work always shows, Shristi di. Proud of you! 🌱",
+    "That’s the spirit! You inspire everyone around you. ✨",
+    "You have the heart of a champion! 🏆 Go, Shristi di!",
+    "Every answer proves your dedication. Keep it up! 🚀",
+    "You are destined for greatness, Shristi di! This is your year! 💚"
+];
+
+// Special facts/gifts/jokes for each page
+const pageSpecials = [
+    "Welcome to your special Biology Birthday Quest, Shristi di! Each correct answer unlocks a surprise! 🎁",
+    "Fun Fact: If you unraveled all the DNA in your body, it would reach from the sun to Pluto and back! 🚀",
+    "Joke: Why did the biology book look so full? Because it had all the 'organ' systems! 😄",
+    "Virtual Gift: You win a bouquet of rare Himalayan flowers! 🌸🌼",
+    "Science Fact: Your heart beats about 100,000 times a day. That's some serious cardio! ❤️",
+    "Riddle: I am the 'powerhouse' of the cell. Who am I? (Mitochondria!) 🔋",
+    "Wish: May you keep growing and glowing, just like your favorite plant! 🌱",
+    "You're officially the Bio-Queen! 👑 Here's your virtual tiara.",
+    "🎉 Congratulations, Shristi di! 🎉<br><span class='crown'>👑</span><b>Happy Birthday!</b><br><br><span style='font-size:1.04em; color:#1976d2;'>Your journey through biology is inspiring, and your energy lights up every room.<br>May your dreams grow as big as your heart, and may this year bring you endless discoveries and happiness.<br><br>Always remember, I am so proud to have you as my sister!</span><br><br><span class='trophy'>🏆</span><br><br><i>(Add your favorite photo here!)</i>"
+];
+
+// Images for each page (replace "shristi.png" with your photo)
+const images = [
+    "IMG-20241108-WA0034.jpg",
+    "IMG-20241108-WA0040.jpg",
+    "IMG-20241108-WA0076.jpg",
+    "IMG-20241108-WA0079.jpg",
+    "IMG-20241108-WA0083.jpg",
+    "https://cdn.pixabay.com/photo/2013/07/12/12/58/brain-146472_1280.png",
+    "https://cdn.pixabay.com/photo/2017/01/31/13/15/icon-2027670_1280.png",
+    "https://cdn.pixabay.com/photo/2014/04/03/00/41/dna-309944_1280.png",
+    "shristi.png" // <- Your real photo
+];
+
+// Number of rounds/pages before final (excluding welcome and congrats)
+const N_ROUNDS = 8;
+
+let quizIndexes = [];
+let currentPage = 0;
+let answered = false;
+
+// Randomly pick N unique questions for this attempt
+function pickQuizIndexes() {
+    let idxs = [];
+    let used = {};
+    while (idxs.length < N_ROUNDS) {
+        let i = Math.floor(Math.random() * questionPool.length);
+        if (!used[i]) {
+            idxs.push(i);
+            used[i] = true;
+        }
+    }
+    return idxs;
+}
+
+// Confetti celebration (simple JS confetti)
+function throwConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.style.display = "block";
+    const ctx = canvas.getContext('2d');
+    let W = window.innerWidth, H = window.innerHeight;
+    canvas.width = W; canvas.height = H;
+    let particles = [];
+    for(let i=0;i<180;i++) {
+        particles.push({
+            x: Math.random()*W,
+            y: Math.random()*-H,
+            r: Math.random()*8+6,
+            d: Math.random()*N_ROUNDS+4,
+            color: `hsl(${Math.random()*360}, 90%, 60%)`,
+            tilt: Math.random()*10-10,
+            tiltAngle: 0,
+            tiltAngleIncremental: (Math.random()*0.1)+0.05
+        });
+    }
+    function draw() {
+        ctx.clearRect(0,0,W,H);
+        for(let i=0; i<particles.length; i++){
+            let p=particles[i];
+            ctx.beginPath();
+            ctx.lineWidth = p.r;
+            ctx.strokeStyle = p.color;
+            ctx.moveTo(p.x+p.tilt+Math.sin(p.tiltAngle)*8, p.y);
+            ctx.lineTo(p.x, p.y+p.tilt+p.r/2);
+            ctx.stroke();
+        }
+        update();
+    }
+    function update() {
+        for(let i=0; i<particles.length; i++){
+            let p=particles[i];
+            p.y += (Math.cos(p.d)+2+p.r/2)/1.8;
+            p.x += Math.sin(0.01*p.d);
+            p.tiltAngle += p.tiltAngleIncremental;
+            p.tilt = Math.sin(p.tiltAngle)*12;
+            if(p.y > H) {
+                p.x = Math.random()*W;
+                p.y = Math.random()*-20;
+            }
+        }
+    }
+    let confettiInterval = setInterval(draw, 17);
+    setTimeout(()=>{canvas.style.display="none";clearInterval(confettiInterval);}, 4500);
+}
+
+// Render current page
+function renderPage() {
+    let html = '';
+    let special = pageSpecials[currentPage];
+    let img = images[currentPage] || images[0];
+
+    // Progress bar (exclude welcome and congrats page from progress)
+    let maxProgress = N_ROUNDS + 1;
+    let progressPercent = (currentPage) / maxProgress * 100;
+    document.getElementById('progressbar').style.width = `${progressPercent}%`;
+
+    if (currentPage === 0) {
+        // Welcome Page
+        html += `<img class="bio-img" src="${img}" alt="Bio Quest">`;
+        html += `<div class="bio-question" style="font-size:1.18rem;">${special}</div>`;
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('next-btn').textContent = "Start ➡️";
+    } else if (currentPage <= N_ROUNDS) {
+        // Question Pages
+        let qIdx = quizIndexes[currentPage - 1];
+        let qObj = questionPool[qIdx];
+        html += `<img class="bio-img" src="${img}" alt="Bio Quest">`;
+        html += `<div class="bio-question">${qObj.q}</div>`;
+        html += `<div class="bio-options">`;
+        qObj.options.forEach((opt, idx) => {
+            html += `<button class="bio-option" onclick="selectOption(${idx})" id="option${idx}">${opt}</button>`;
+        });
+        html += `</div>`;
+        html += `<div class="bio-feedback" id="bio-feedback"></div>`;
+        html += `<div class="bio-special" id="bio-special">${special}</div>`;
+        document.getElementById('next-btn').style.display = 'none';
+    } else {
+        // Final Congratulations Page
+        img = images[images.length-1];
+        html += `<img class="bio-img" src="${img}" alt="Bio Quest" style="border-radius:15px; box-shadow:0 0 16px #a2c;">">`;
+        html += `<div class="bio-question" style="font-size:1.22rem; color:#42a36b;"><b>${special}</b></div>`;
+        document.getElementById('next-btn').textContent = "Restart 🎂";
+        document.getElementById('next-btn').style.display = 'inline-block';
+        throwConfetti();
+    }
+
+    document.getElementById('page-content').innerHTML = html;
+    if (currentPage === 0) {
+        document.getElementById('next-btn').disabled = false;
+    }
+    if (currentPage > 0 && currentPage <= N_ROUNDS) {
+        document.getElementById('bio-special').classList.remove('visible');
+    }
+    answered = false;
+}
+
+// Handle answer selection
+function selectOption(idx) {
+    if (answered) return;
+    let qIdx = quizIndexes[currentPage - 1];
+    let qObj = questionPool[qIdx];
+    let message = motivationalMessages[(currentPage-1)%motivationalMessages.length];
+    if (idx === qObj.answer) {
+        document.getElementById('bio-feedback').style.color = "#218c53";
+        document.getElementById('bio-feedback').innerHTML = `<span>${message}</span>`;
+        document.getElementById('option'+idx).classList.add('selected');
+        document.getElementById('bio-special').classList.add('visible');
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('next-btn').disabled = false;
+        document.getElementById('next-btn').textContent = (currentPage === N_ROUNDS) ? "Finish 🎉" : "Next →";
+        answered = true;
+    } else {
+        document.getElementById('bio-feedback').style.color = "#d84315";
+        document.getElementById('bio-feedback').innerHTML = "Oops! Wrong answer. You have to restart with new questions! 😅";
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('next-btn').disabled = false;
+        document.getElementById('next-btn').textContent = "Restart 🔄";
+        answered = true;
+        // On next click, restart quiz
+        document.getElementById('next-btn').onclick = restartQuiz;
+    }
+}
+
+// Next button logic
+function goToNextPage() {
+    currentPage++;
+    if (currentPage > N_ROUNDS + 1) {
+        restartQuiz();
+    } else {
+        renderPage();
+    }
+}
+
+// Restart quiz with new questions and reset to first page
+function restartQuiz() {
+    quizIndexes = pickQuizIndexes();
+    currentPage = 0;
+    renderPage();
+    document.getElementById('next-btn').onclick = goToNextPage;
+}
+
+// Initial quiz setup
+restartQuiz();
+
+</script>
+</body>
+</html>
